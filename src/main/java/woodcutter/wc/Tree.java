@@ -57,21 +57,11 @@ public class Tree{
         Location under = b.getLocation().clone();
         under.setY(under.getY()-1);
         Material ub = under.getBlock().getType();
+        under.setY(under.getY()-1);
+        Material uub = under.getBlock().getType();
 
         //原木の下が土系のブロックか
-        if(!(ub.equals(Material.DIRT)
-                || ub.equals(Material.PODZOL)
-                || ub.equals(Material.COARSE_DIRT)
-                || ub.equals(Material.GRASS_BLOCK)
-                || ub.equals(Material.MYCELIUM)
-                || ub.equals(Material.CRIMSON_NYLIUM)
-                || ub.equals(Material.WARPED_NYLIUM)
-                || ub.equals(Material.NETHERRACK)
-                || ub.equals(Material.MOSS_BLOCK)
-                || ub.equals(Material.MUD)
-                || ub.equals(Material.MANGROVE_ROOTS)
-                || ub.equals(Material.MUDDY_MANGROVE_ROOTS)
-        )){
+        if(!isDirt(ub) && !isDirt(uub)){
             return false;
         }else if( !(WoodUtil.isWood(b.getType()) || WoodUtil.isMangroveLog(b.getType())) ){
             return false;
@@ -91,6 +81,21 @@ public class Tree{
         return treeLeaves.size() > 0;
     }
 
+    private boolean isDirt(Material type){
+        return type.equals(Material.DIRT)
+                || type.equals(Material.PODZOL)
+                || type.equals(Material.COARSE_DIRT)
+                || type.equals(Material.GRASS_BLOCK)
+                || type.equals(Material.MYCELIUM)
+                || type.equals(Material.CRIMSON_NYLIUM)
+                || type.equals(Material.WARPED_NYLIUM)
+                || type.equals(Material.NETHERRACK)
+                || type.equals(Material.MOSS_BLOCK)
+                || type.equals(Material.MUD)
+                || type.equals(Material.MANGROVE_ROOTS)
+                || type.equals(Material.MUDDY_MANGROVE_ROOTS);
+    }
+
     /** 周囲のブロックを検査し、原木があればさらにその周りを検査する
      *
      * @param firstBlock 最初に壊したブロック  原木でなければならない
@@ -98,6 +103,12 @@ public class Tree{
     private void orkLogic(Block firstBlock, int radius) {
         Location l = firstBlock.getLocation().clone();
         boolean firstLayer = true;
+
+        Location under = l.clone();
+        under.setY(under.getY()-1);
+        if (under.getBlock().getType().equals(logType)) {
+            l = under.clone();
+        }
 
         while (l.getBlock().getType().equals(logType)) {
             if(tooBig()){
